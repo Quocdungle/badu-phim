@@ -1,0 +1,324 @@
+{
+  "api_info": {
+    "title": "NGUỒN PHIM API",
+    "description": "Kết nối kho dữ liệu phim qua REST API đơn giản, phản hồi JSON rõ ràng.",
+    "base_url": "https://phim.nguonc.com/api",
+    "protocols": ["HTTPS"],
+    "response_format": "JSON"
+  },
+  "endpoints": [
+    {
+      "id": "latest_movies",
+      "name": "Phim mới cập nhật",
+      "description": "Trả về danh sách phim được cập nhật gần nhất, sắp xếp theo thời gian.",
+      "method": "GET",
+      "endpoint": "/films/phim-moi-cap-nhat",
+      "request": {
+        "query_parameters": [
+          {
+            "name": "page",
+            "type": "integer",
+            "description": "Trang cần lấy, bắt đầu từ 1.",
+            "example": 1
+          }
+        ]
+      },
+      "response": {
+        "model": "ListResponse"
+      }
+    },
+    {
+      "id": "category_movies",
+      "name": "Phim theo danh mục",
+      "description": "Lọc danh sách theo danh mục như đang chiếu, phim bộ hoặc phim lẻ.",
+      "method": "GET",
+      "endpoint": "/films/danh-sach/{slug}",
+      "request": {
+        "path_parameters": [
+          {
+            "name": "slug",
+            "type": "string",
+            "description": "Slug của danh mục phim (VD: dang-chieu, phim-bo, phim-le).",
+            "example": "dang-chieu"
+          }
+        ],
+        "query_parameters": [
+          {
+            "name": "page",
+            "type": "integer",
+            "description": "Trang cần lấy, bắt đầu từ 1.",
+            "example": 1
+          }
+        ]
+      },
+      "response": {
+        "model": "ListResponse"
+      }
+    },
+    {
+      "id": "movie_detail",
+      "name": "Chi tiết phim",
+      "description": "Trả về metadata đầy đủ của một phim và danh sách tập hiện có.",
+      "method": "GET",
+      "endpoint": "/film/{slug}",
+      "request": {
+        "path_parameters": [
+          {
+            "name": "slug",
+            "type": "string",
+            "description": "Slug duy nhất của phim.",
+            "example": "hoa-thien-cot"
+          }
+        ]
+      },
+      "response": {
+        "model": "DetailResponse"
+      }
+    },
+    {
+      "id": "genre_movies",
+      "name": "Phim theo thể loại",
+      "description": "Lọc phim theo slug thể loại, ví dụ hành động hoặc tình cảm.",
+      "method": "GET",
+      "endpoint": "/films/the-loai/{slug}",
+      "request": {
+        "path_parameters": [
+          {
+            "name": "slug",
+            "type": "string",
+            "description": "Slug thể loại (VD: hanh-dong).",
+            "example": "hanh-dong"
+          }
+        ],
+        "query_parameters": [
+          {
+            "name": "page",
+            "type": "integer",
+            "description": "Trang cần lấy.",
+            "example": 1
+          }
+        ]
+      },
+      "response": {
+        "model": "ListResponse"
+      }
+    },
+    {
+      "id": "country_movies",
+      "name": "Phim theo quốc gia",
+      "description": "Lọc phim theo quốc gia hoặc khu vực sản xuất.",
+      "method": "GET",
+      "endpoint": "/films/quoc-gia/{slug}",
+      "request": {
+        "path_parameters": [
+          {
+            "name": "slug",
+            "type": "string",
+            "description": "Slug quốc gia hoặc khu vực (VD: au-my).",
+            "example": "au-my"
+          }
+        ],
+        "query_parameters": [
+          {
+            "name": "page",
+            "type": "integer",
+            "description": "Trang cần lấy.",
+            "example": 1
+          }
+        ]
+      },
+      "response": {
+        "model": "ListResponse"
+      }
+    },
+    {
+      "id": "year_movies",
+      "name": "Phim theo năm",
+      "description": "Lọc phim theo năm phát hành được lưu trong hệ thống.",
+      "method": "GET",
+      "endpoint": "/films/nam-phat-hanh/{year}",
+      "request": {
+        "path_parameters": [
+          {
+            "name": "year",
+            "type": "integer",
+            "description": "Năm phát hành gồm bốn chữ số (VD: 2024).",
+            "example": 2024
+          }
+        ],
+        "query_parameters": [
+          {
+            "name": "page",
+            "type": "integer",
+            "description": "Trang cần lấy.",
+            "example": 1
+          }
+        ]
+      },
+      "response": {
+        "model": "ListResponse"
+      }
+    },
+    {
+      "id": "search_movies",
+      "name": "Tìm kiếm phim",
+      "description": "Tìm các phim phù hợp với từ khóa và nhận kết quả phân trang.",
+      "method": "GET",
+      "endpoint": "/films/search",
+      "request": {
+        "query_parameters": [
+          {
+            "name": "keyword",
+            "type": "string",
+            "description": "Tên phim hoặc từ khóa cần tìm.",
+            "example": "Regeneration"
+          }
+        ]
+      },
+      "response": {
+        "model": "ListResponse"
+      }
+    }
+  ],
+  "response_models": {
+    "ListResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Trạng thái xử lý yêu cầu",
+          "example": "success"
+        },
+        "paginate": {
+          "type": "object",
+          "properties": {
+            "current_page": { "type": "integer" },
+            "total_page": { "type": "integer" },
+            "total_items": { "type": "integer" },
+            "items_per_page": { "type": "integer" }
+          }
+        },
+        "cat": {
+          "type": "object",
+          "description": "Thông tin bộ lọc hiện tại (nếu có)",
+          "properties": {
+            "name": { "type": "string" },
+            "title": { "type": "string" },
+            "slug": { "type": "string" }
+          }
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/MovieItem"
+          }
+        }
+      }
+    },
+    "DetailResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Trạng thái xử lý yêu cầu",
+          "example": "success"
+        },
+        "movie": {
+          "$ref": "#/components/schemas/MovieDetail"
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "MovieItem": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "slug": { "type": "string" },
+          "original_name": { "type": "string" },
+          "thumb_url": { "type": "string" },
+          "poster_url": { "type": "string" },
+          "created": { "type": "string", "format": "date-time" },
+          "modified": { "type": "string", "format": "date-time" },
+          "description": { "type": "string" },
+          "total_episodes": { "type": "integer" },
+          "current_episode": { "type": "string" },
+          "time": { "type": "string" },
+          "quality": { "type": "string" },
+          "language": { "type": "string" },
+          "director": { "type": "string" },
+          "casts": { "type": "string" },
+          "year": { "type": "string" }
+        }
+      },
+      "MovieDetail": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "slug": { "type": "string" },
+          "original_name": { "type": "string" },
+          "thumb_url": { "type": "string" },
+          "poster_url": { "type": "string" },
+          "created": { "type": "string", "format": "date-time" },
+          "modified": { "type": "string", "format": "date-time" },
+          "description": { "type": "string" },
+          "total_episodes": { "type": "integer" },
+          "current_episode": { "type": "string" },
+          "time": { "type": "string" },
+          "quality": { "type": "string" },
+          "language": { "type": "string" },
+          "director": { "type": "string" },
+          "casts": { "type": "string" },
+          "category": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "group": { 
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "name": { "type": "string" }
+                  }
+                },
+                "list": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "string" },
+                      "name": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "episodes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "server_name": { "type": "string" },
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": { "type": "string" },
+                      "slug": { "type": "string" },
+                      "embed": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
